@@ -1,4 +1,5 @@
 import Database from "../Database/index.js";
+
 export default function CourseRoutes(app) {
   // new get
   app.get("/api/courses/:id", (req, res) => {
@@ -25,7 +26,7 @@ export default function CourseRoutes(app) {
     Database.courses = Database.courses.filter((c) => c._id !== id);
     res.sendStatus(204);
   });
-  // post
+  // post: create
   app.post("/api/courses", (req, res) => {
     const course = { ...req.body, _id: new Date().getTime().toString() };
     Database.courses.push(course);

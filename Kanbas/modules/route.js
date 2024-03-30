@@ -1,4 +1,5 @@
 import db from "../Database/index.js";
+import modules from "../Database/modules.js";
 
 export default function ModuleRoutes(app) {
   // update
@@ -19,7 +20,7 @@ export default function ModuleRoutes(app) {
     res.sendStatus(200);
   });
 
-  // post
+  // post: create
   app.post("/api/courses/:cid/modules", (req, res) => {
     const { cid } = req.params;
     const newModule = {
@@ -35,6 +36,12 @@ export default function ModuleRoutes(app) {
     const { cid } = req.params;
     const modules = db.modules.filter((m) => m.course === cid);
     console.log(req, modules);
+    res.send(modules);
+  });
+
+  // get all courses
+  app.get("/api/modules", (req, res) => {
+    const modules = db.modules;
     res.send(modules);
   });
 }
