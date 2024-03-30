@@ -37,4 +37,9 @@ export default function ModuleRoutes(app) {
     console.log(req, modules);
     res.send(modules);
   });
+  // get all courses
+  app.get("/api/modules", (req, res) => {
+    const modules = db.modules;
+    res.send(modules);
+  });
 }
