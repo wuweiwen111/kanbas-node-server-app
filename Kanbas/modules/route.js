@@ -1,5 +1,4 @@
 import db from "../Database/index.js";
-import modules from "../Database/modules.js";
 
 export default function ModuleRoutes(app) {
   // update
