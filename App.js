@@ -14,16 +14,20 @@ import QuizRoutes from "./Kanbas/courses/quiz/routes.js";
 // mongoose.connect("mongodb://127.0.0.1:27017/kanbas");
 const CONNECTION_STRING =
   process.env.DB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kanbas";
-mongoose.connect(CONNECTION_STRING);
 
-const app = express();
-//cors
-app.use(
-  cors({
-    credentials: true,
-    origin: ["http://localhost:3000", process.env.FRONTEND_URL],
+const DB_NAME = process.env.DB_NAME || "kanbas";
+
+// mongoose.connect(CONNECTION_STRING, { dbName: DB_NAME });
+mongoose
+  .connect(CONNECTION_STRING, { dbName: DB_NAME })
+  .then(() => {
+    console.log("Connected to MongoDB");
   })
-);
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+  });
+const app = express();
+
 // session
 // const sessionOptions = {
 //   secret: "any string",
@@ -43,10 +47,15 @@ if (process.env.NODE_ENV !== "development") {
     secure: true,
   };
 }
-
 app.use(session(sessionOptions));
-
 app.use(express.json());
+//cors
+app.use(
+  cors({
+    credentials: true,
+    origin: ["http://localhost:3000", process.env.FRONTEND_URL],
+  })
+);
 // all component
 Hello(app);
 CourseRoutes(app);

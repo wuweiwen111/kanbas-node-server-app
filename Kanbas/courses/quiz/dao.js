@@ -30,10 +30,26 @@ export const findQuizzesByCourse = (courseId) => {
   return model.find({ course: courseId });
 };
 
-// quiz type
-export const findQuizByType = (quizType) => model.find({ quizType: quizType });
-
+// quiz type - question type
+// export const findQuizByType = (quizType) => model.find({ quizType: quizType });
+export const findQuizByType = (quizType, courseId) => {
+  return model.find({ quizType: quizType, course: courseId });
+};
 // ？？？
 export const findQuizzesByAuthor = (author) => {
   return model.find({ author: author });
+};
+
+//  add question
+export const addQuestionToQuiz = async (quizId, question) => {
+  return model.findByIdAndUpdate(
+    quizId,
+    { $push: { questions: question } },
+    { new: true } // Return the updated document
+  );
+};
+
+// find question
+export const findQuestionByQuizId = async (quizId) => {
+  return model.findById(quizId);
 };
