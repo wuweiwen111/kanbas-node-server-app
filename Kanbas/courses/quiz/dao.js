@@ -1,7 +1,8 @@
 import model from "./model.js";
 
 // Create a new quiz
-export const createQuiz = (quiz) => {
+export const createQuiz = (courseId, quiz) => {
+  quiz.courseId = courseId;
   return model.create(quiz);
 };
 
@@ -30,11 +31,6 @@ export const findQuizzesByCourse = (courseId) => {
   return model.find({ course: courseId });
 };
 
-// quiz type - question type
-// export const findQuizByType = (quizType) => model.find({ quizType: quizType });
-export const findQuizByType = (quizType, courseId) => {
-  return model.find({ quizType: quizType, course: courseId });
-};
 // ？？？
 export const findQuizzesByAuthor = (author) => {
   return model.find({ author: author });
@@ -52,4 +48,20 @@ export const addQuestionToQuiz = async (quizId, question) => {
 // find question
 export const findQuestionByQuizId = async (quizId) => {
   return model.findById(quizId);
+};
+
+// export const findQuizByType = (quizType) => model.find({ quizType: quizType });
+// export const findQuestionByType = (quizQuestionType, courseId, quizId) => {
+//   return model.find({
+//     "questions.questionType": quizQuestionType, // Adjust the path to questionType if necessary
+//     course: courseId,
+//     _id: quizId,
+//   });
+// };
+export const findQuestionByType = (quizQuestionType, courseId, quizId) => {
+  return model.findOne({
+    _id: quizId,
+    course: courseId,
+    "questions.questionType": quizQuestionType,
+  });
 };

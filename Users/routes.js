@@ -24,46 +24,39 @@ export default function UserRoutes(app) {
     res.json(users);
     return;
   };
-  const findUserById = async (req, res) => {};
+  const findUserById = async (req, res) => {
+    const userId = req.params.userId;
+    const user = await dao.findUserById(userId);
+    res.send(user);
+  };
   // update user
   const updateUser = async (req, res) => {
     const { userId } = req.params;
     const status = await dao.updateUser(userId, req.body);
     let currentUser = await dao.findUserById(userId);
+    req.session["currentUser"] = currentUser;
     res.json(status);
   };
   // sign in
   const signin = async (req, res) => {
     const { username, password } = req.body;
     // console.log(req.body);
-    let currentUser = await dao.findUserByCredentials(username, password);
+    const currentUser = await dao.findUserByCredentials(username, password);
     // console.log("signin set", currentUser);
     if (currentUser) {
       req.session["currentUser"] = currentUser;
       globalCurrentUser = currentUser;
       res.json(currentUser);
     } else {
-      res.sendStatus(401);
+      res.status(401).send("Invalid credentials");
     }
   };
-  // sign up a new user
-  const signup = async (req, res) => {
-    const user = await dao.findUserByUsername(req.body.username);
-    // sign up before
-    if (user) {
-      res.status(404).json({ message: "Username Already Signed Up!" });
-    }
-    // no sign up before
-    let currentUser = await dao.createUser(req.body);
-    req.session["currentUser"] = currentUser;
-    globalCurrentUser = currentUser;
-    res.json(currentUser);
-  };
+
   // sign out
   const signout = (req, res) => {
     req.session.destroy();
-    // currentUser = null;
-    res.sendStatus(200);
+    currentUser = null;
+    res.send("Signed out");
   };
   // profile
   const profile = async (req, res) => {
@@ -76,14 +69,31 @@ export default function UserRoutes(app) {
     // res.send(req.session.currentUser);
     res.json(currentUser);
   };
+
+  // sign up a new user
+  const signup = async (req, res) => {
+    const user = await dao.findUserByUsername(req.body.username);
+    // sign up before
+    if (user) {
+      res.status(404).json({ message: "Username Already Taken!" });
+    }
+    // no sign up before
+    const currentUser = await dao.createUser(req.body);
+    req.session["currentUser"] = currentUser;
+    globalCurrentUser = currentUser;
+    res.json(currentUser);
+  };
   app.post("/api/users", createUser); // create user
   app.get("/api/users", findAllUsers); // get all users
   app.get("/api/users/:userId", findUserById);
   app.put("/api/users/:userId", updateUser); // update user
   app.delete("/api/users/:userId", deleteUser); // delete
-  app.post("/api/users/signup", signup); // sign up
   app.post("/api/users/signin", signin); // sign in
   app.post("/api/users/signout", signout); // sign out
   app.post("/api/users/profile", profile); // profile
   // app.get("/api/users/profile", profile); // profile
+
+  // register
+  app.post("/api/users", createUser); // create user
+  app.post("/api/users/signup", signup); // sign up
 }

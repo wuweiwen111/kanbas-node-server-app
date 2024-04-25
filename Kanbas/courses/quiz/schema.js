@@ -56,6 +56,11 @@ const questionSchema = new mongoose.Schema({
   ],
   explanation: String, // Optional explanation for the answer
   points: { type: Number, default: 1 }, // Assign points per question
+  questionType: {
+    type: String,
+    enum: ["Multiple Choice", "True/False", "Fill in Multiple Blanks"],
+    required: true, // Ensure this field must be specified
+  },
 });
 
 // Main quiz schema
@@ -67,13 +72,8 @@ const schema = new mongoose.Schema(
     description: String,
     quizType: {
       type: String,
-      enum: [
-        "Graded Quiz",
-        "Practice Quiz",
-        "Graded Survey",
-        "Ungraded Survey",
-      ],
-      default: "Graded Quiz",
+      enum: ["gradedQuiz", "practiceQuiz", "gradedSurvey", "ungradedSurvey"],
+      default: "gradedQuiz",
     },
     points: Number,
     assignmentGroup: {
@@ -89,16 +89,17 @@ const schema = new mongoose.Schema(
     oneQuestionAtATime: Boolean,
     webcamRequired: Boolean,
     lockQuestionsAfterAnswering: Boolean,
-    dueDate: Date,
-    availableDate: Date,
-    untilDate: Date,
-    published: Boolean,
-    questions: [questionSchema], // Add questions as a subdocument array
-    quizQuestionType: {
-      type: String,
-      enum: ["Multiple Choice", "True/False", "Fill in Multiple Blanks"],
-      default: "Multiple Choice",
-    },
+    dueDate: String,
+    availableDate: String,
+    untilDate: String,
+    isPublished: Boolean,
+    questions: [questionSchema],
+    numberOfQuestion: Number,
+    // quizQuestionType: {
+    //   type: String,
+    //   enum: ["Multiple Choice", "True/False", "Fill in Multiple Blanks"],
+    //   default: "Multiple Choice",
+    // },
   },
   { collection: "quizzes" }
 );

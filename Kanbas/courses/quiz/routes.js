@@ -19,10 +19,10 @@ export default function QuizRoutes(app) {
   //   const quizzes = await dao.findQuizByType(quizType);
   //   res.json(quizzes);
   // };
-  const findQuizzesByType = async (req, res) => {
-    const { quizType } = req.query; // Use query parameters for filtering
-    const { cid } = req.params; // You can keep course ID if it's required to narrow the search to a particular course.
-    const quizzes = await dao.findQuizByType(quizType, cid); // Adjust DAO if it needs to handle course ID
+  const findQuestionByType = async (req, res) => {
+    const { quizQuestionType } = req.query; // Use query parameters for filtering
+    const { cid, qid } = req.params; // You can keep course ID if it's required to narrow the search to a particular course.
+    const quizzes = await dao.findQuestionByType(quizQuestionType, cid, qid); // Adjust DAO if it needs to handle course ID
     res.json(quizzes);
   };
 
@@ -36,22 +36,37 @@ export default function QuizRoutes(app) {
   // find all quizzes from authors??
 
   // delete
+  // const deleteQuiz = async (req, res) => {
+  //   const { cid } = req.params;
+  //   const status = await dao.deleteQuiz(cid);
+  //   // res.sendStatus(200);
+  //   res.json(status);
+  // };
   const deleteQuiz = async (req, res) => {
-    const { cid } = req.params;
-    const status = await dao.deleteQuiz(cid);
-    // res.sendStatus(200);
+    const { cid,qid } = req.params;
+    // const { quizId } = req.query;
+    const status = await dao.deleteQuiz(qid);
     res.json(status);
   };
 
   // create
   const createQuiz = async (req, res) => {
-    const newQuiz = await dao.createQuiz(req.body);
-    res.json(newQuiz);
+    const { cid } = req.params;
+    console.log("Received quiz data:", req.body); // Log the body to see what is received
+    try {
+      const newQuiz = await dao.createQuiz(cid, req.body);
+      res.json(newQuiz);
+    } catch (error) {
+      console.error("Error creating quiz:", error);
+      res
+        .status(500)
+        .json({ message: "Failed to create quiz", error: error.message });
+    }
   };
 
   // update
   const updateQuiz = async (req, res) => {
-    const { qid } = req.params;
+    const { cid, qid } = req.params;
     const status = await dao.updateQuiz(qid, req.body);
     res.json(status);
   };
@@ -86,9 +101,9 @@ export default function QuizRoutes(app) {
 
   // app.get("/api/courses/:cid/quizzes", findAllQuizzes);
   app.get("/api/courses/:cid/quizzes/:qid", findQuizById);
-  app.get("/api/courses/:cid/quizzes/type", findQuizzesByType); // ???
+  app.get("/api/courses/:cid/quizzes/:qid/Questions", findQuestionByType);
   app.get("/api/courses/:cid/quizzes", findQuizzesByCourse);
-  app.delete("/api/courses/:cid/quizzes", deleteQuiz);
+  app.delete("/api/courses/:cid/quizzes/:qid", deleteQuiz);
   app.post("/api/courses/:cid/quizzes", createQuiz);
-  app.put("/api/quizzes/:cid/quizzes/:qid", updateQuiz);
+  app.put("/api/courses/:cid/quizzes/:qid", updateQuiz);
 }
