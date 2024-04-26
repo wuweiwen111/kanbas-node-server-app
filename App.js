@@ -45,6 +45,7 @@ if (process.env.NODE_ENV !== "development") {
   sessionOptions.cookie = {
     sameSite: "none",
     secure: true,
+    domain: process.env.HTTP_SERVER_DOMAIN,
   };
 }
 app.use(session(sessionOptions));
@@ -56,7 +57,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       process.env.FRONTEND_URL,
-      "https://cs5610-spring2024-final-project.netlify.app/",
+      "https://cs5610-spring2024-final-project.netlify.app",
     ],
   })
 );
