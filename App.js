@@ -53,7 +53,11 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000", process.env.FRONTEND_URL],
+    origin: [
+      "http://localhost:3000",
+      process.env.FRONTEND_URL,
+      "https://cs5610-spring2024-final-project.netlify.app/",
+    ],
   })
 );
 // all component
